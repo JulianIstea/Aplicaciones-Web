@@ -1,300 +1,274 @@
 
-/* Elimina márgenes y paddings por defecto del navegador */
+/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Define la fuente principal del sitio */
 body {
     font-family: Arial, Helvetica, sans-serif;
-    /* Color de fondo general - blanco roto */
     background-color: #48d2a4;
-    /* Color del texto principal */
     color: #212529;
-    /* Tamaño de fuente base */
     font-size: 16px;
-    /* Altura de línea para mejor lectura */
     line-height: 1.6;
 }
 
 /* ----------------------------------------
-   Encabezado (header)
+   Header
    ---------------------------------------- */
-
-/* Estilos para el header */
 header {
-    /* Fondo azul oscuro (asociado a frío) */
     background-color: #023e8a;
-    /* Color del texto en blanco */
     color: #64eeea;
-    /*Espaciado interno */
     padding: 20px;
-    /* Centra el contenido */
     text-align: center;
+    /* padding-top extra porque la nav fixed tapa */
+    padding-top: 60px;
 }
 
-/* Título principal en el header */
 header h1 {
-    /* Tamaño de fuente grande */
     font-size: 2.5rem;
-    /* Margen inferior */
     margin-bottom: 10px;
 }
 
-/* Subtítulo del header */
 header p {
-    /* Tamaño de fuente más pequeño */
     font-size: 1.2rem;
-    /* Color más claro */
     color: #90e0ef;
 }
 
 /* ----------------------------------------
-   Navegación (nav)
+   Navbar fija (requisito 1)
+   position: fixed -> sale del flujo normal
+   y se mantiene visible al hacer scroll.
+   z-index: 100 -> se superpone a otros
+   elementos (mayor numero = mas arriba).
    ---------------------------------------- */
-
-/* Barra de navegación */
 nav {
-    /* Fondo azul medio */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
     background-color: #0077b6;
-    /* Padding interno */
     padding: 10px;
-    /* Centra el contenido */
     text-align: center;
 }
 
-/* Elementos de lista del menú */
 nav ul {
-    /* Elimina las viñetas */
     list-style: none;
-    /* Quita el margen izquierdo por defecto */
     margin-left: 0;
 }
 
-/* Elementos de lista en línea (horizontal) */
 nav ul li {
-    /* Display inline permite poner elementos en línea */
     display: inline;
-    /* Margen entre elementos del menú */
     margin: 0 15px;
 }
 
-/* Enlaces del menú de navegación */
 nav a {
-    /* Color del texto */
     color: #ffffff;
-    /* Sin subrayado */
     text-decoration: none;
-    /* Texto en negrita */
     font-weight: bold;
 }
 
-/* Efecto hover - cuando el mouse pasa por encima */
 nav a:hover {
-    /* Color azul claro */
     color: #90e0ef;
-    /* Subrayado */
     text-decoration: underline;
 }
 
 /* ----------------------------------------
-   Contenido principal (main)
+   Main - padding-top para que el contenido
+   no quede oculto detras de la nav fixed
    ---------------------------------------- */
-
-/* Contenedor principal */
 main {
-    /* Ancho máximo para legibilidad */
     max-width: 1000px;
-    /* Margen automático para centrar */
     margin: 0 auto;
-    /* Espaciado interno */
     padding: 20px;
+    padding-top: 60px;
 }
 
 /* ----------------------------------------
    Secciones
    ---------------------------------------- */
-
-/* Todas las secciones */
 section {
-    /* Margen inferior entre secciones */
     margin-bottom: 40px;
-    /* Fondo blanco */
     background-color: #ffffff;
-    /* Padding interno */
     padding: 20px;
-    /* Borde sutil */
     border: 1px solid #dee2e6;
-    /* Bordes redondeados */
     border-radius: 8px;
 }
 
-/* Títulos de sección (h2) */
+/* Título h2 con ::after animado (requisito 5) */
 section h2 {
-    /* Color azul medio */
+    position: relative;
+    display: inline-block;
     color: #0077b6;
-    /* Tamaño de fuente */
     font-size: 1.8rem;
-    /* Margen inferior */
     margin-bottom: 15px;
-    /* Borde inferior azul */
-    border-bottom: 2px solid #0077b6;
-    /* Padding inferior */
     padding-bottom: 10px;
+    overflow: hidden;
+}
+
+/* ::after crea una linea decorativa debajo del h2 */
+section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: #0077b6;
+    transition: width 0.4s ease;
+}
+
+/* Al pasar el mouse la linea se expande al 100% */
+section h2:hover::after {
+    width: 100%;
 }
 
 /* ----------------------------------------
-   Artículos (productos)
+   Articulos - Cards (requisito 2, 3, 4)
+   position: relative necesario para el badge absolute
    ---------------------------------------- */
-
-/* Artículos individuales */
 article {
-    /* Margen entre productos */
+    position: relative;
     margin-bottom: 25px;
-    /* Fondo gris muy claro */
     background-color: #f8f9fa;
-    /* Padding interno */
     padding: 15px;
-    /* Borde */
     border: 1px solid #f72d0e;
-    /* Bordes redondeados */
     border-radius: 5px;
+    /* (requisito 3) transition suave en transform y sombra */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* (requisito 4) animacion fadeInUp al cargar */
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
 }
 
-/* Títulos de artículos (h3) */
+/* (requisito 4) delay escalonado: cada card aparece una tras otra */
+article:nth-child(1) { animation-delay: 0.1s; }
+article:nth-child(2) { animation-delay: 0.2s; }
+article:nth-child(3) { animation-delay: 0.3s; }
+article:nth-child(4) { animation-delay: 0.4s; }
+
+/* (requisito 3) hover: levanta y agranda ligeramente la card */
+article:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* (requisito 4) keyframes: aparece desde abajo con fade */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ----------------------------------------
+   Badge (requisito 2)
+   position: absolute -> se posiciona
+   respecto al padre mas cercano con
+   position: relative (el article).
+   top/right: 0 -> esquina superior derecha.
+   ---------------------------------------- */
+.badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #e63946;
+    color: #ffffff;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 0 5px 0 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 article h3 {
-    /* Color azul oscuro */
     color: #023e8a;
-    /* Margen inferior */
     margin-bottom: 10px;
 }
 
-/* Párrafos dentro de artículos */
 article p {
-    /* Margen inferior */
     margin-bottom: 8px;
 }
 
-/* Imágenes de productos */
 article img {
-    /* Ancho máximo */
     max-width: 100%;
-    /* Altura automática */
     height: auto;
-    /* Margen superior e inferior */
     margin-top: 10px;
-    /* Bloque para que ocupe su propia línea */
     display: block;
-    /* Bordes redondeados */
     border-radius: 5px;
 }
 
 /* ----------------------------------------
-   Formulario de contacto
+   Formulario
    ---------------------------------------- */
-
-/* Etiquetas del formulario */
 label {
-    /* Display bloque para que esté encima del input */
     display: block;
-    /* Negrita */
     font-weight: bold;
-    /* Margen inferior */
     margin-bottom: 5px;
-    /* Color azul oscuro */
     color: #023e8a;
 }
 
-/* Campos de entrada (input y textarea) */
 input[type="text"],
 input[type="email"],
 textarea {
-    /* Ancho completo */
     width: 100%;
-    /* Padding interno */
     padding: 10px;
-    /* Borde */
     border: 1px solid #ced4da;
-    /* Bordes redondeados */
     border-radius: 4px;
-    /* Tamaño de fuente */
     font-size: 1rem;
 }
 
-/* Focus - cuando el campo está seleccionado */
 input[type="text"]:focus,
 input[type="email"]:focus,
 textarea:focus {
-    /* Borde azul */
     border-color: #0077b6;
-    /* outline azul */
     outline: 2px solid #90e0ef;
 }
 
-/* Área de texto */
 textarea {
-    /* Permitir redimensionar solo verticalmente */
     resize: vertical;
 }
 
-/* Botón de enviar */
 button[type="submit"] {
-    /* Fondo azul */
     background-color: #0077b6;
-    /* Texto blanco */
     color: #ffffff;
-    /* Padding interno */
     padding: 12px 24px;
-    /* Sin borde */
     border: none;
-    /* Bordes redondeados */
     border-radius: 4px;
-    /* Tamaño de fuente */
     font-size: 1rem;
-    /* Cursor pointer indica que es cliqueable */
     cursor: pointer;
-    /* Transition para efecto suave */
     transition: background-color 0.3s;
 }
 
-/* Hover del botón */
 button[type="submit"]:hover {
-    /* Azul más oscuro al pasar el mouse */
     background-color: #023e8a;
 }
 
 /* ----------------------------------------
-   Footer (pie de página)
+   Footer
    ---------------------------------------- */
-
-/* Footer */
 footer {
-    /* Fondo azul oscuro */
     background-color: #023e8a;
-    /* Texto blanco */
     color: #ffffff;
-    /* Padding interno */
     padding: 15px;
-    /* Centrar texto */
     text-align: center;
-    /* Margen superior */
     margin-top: 20px;
 }
 
 /* ----------------------------------------
-   Enlaces generales
+   Enlaces
    ---------------------------------------- */
-
-/* Enlaces en el contenido */
 a {
-    /* Color azul */
     color: #0077b6;
 }
 
-/* Hover de enlaces */
 a:hover {
-    /* Color azul oscuro */
     color: #023e8a;
 }
