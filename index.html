@@ -75,7 +75,8 @@
 					precio: '$870.000',
 					img: 'Multimedia/heladera.jfif',
 					badge: 'OFERTA',
-					id: 1
+					id: 1,
+					stock: 5
 				},
 				{
 					nombre: 'Heladera Expositora Vertical 2 Puertas',
@@ -83,7 +84,8 @@
 					precio: '$990.000',
 					img: 'Multimedia/EXHIBID-2P-B-600x600.png ',
 					badge: 'OFERTA',
-					id: 2
+					id: 2,
+					stock: 3
 				},
 				{
 					nombre: 'Heladera Expositora Vertical 3 Puertas',
@@ -91,22 +93,25 @@
 					precio: '$1.200.000',
 					img: 'Multimedia/EXHIBID-3PA-600x600.png ',
 					badge: 'NUEVO',
-					id: 3
+					id: 3,
+					stock: 0
 				},
 				{
 					nombre: 'Heladera Expositora Vertical 4 Puertas',
-					desc: 'Ideal para bebidas y más!!',
+					desc: 'Ideal para bebidas y mas!!',
 					precio: '$1.420.000',
 					img: 'Multimedia/EXHIBID-4P-D-600x600.png',
 					badge: 'OFERTA',
-					id: 4
+					id: 4,
+					stock: 2
 				},
 				{
 					nombre: 'Heladera Expositora Vertical 5 Puertas',
 					precio: '$1.880.000',
 					img: 'Multimedia/EXHIBIDORA-5P.png',
 					badge: 'NUEVO',
-					id: 5
+					id: 5,
+					stock: 0
 				},
 				{
 					nombre: 'Heladera de Mostrador',
@@ -114,23 +119,26 @@
 					precio: '$1.000.000',
 					img: 'Multimedia/heladera-exhibidora-batea-02.jpg',
 					badge: 'NUEVO',
-					id: 6
+					id: 6,
+					stock: 4
 				},
 				{
 					nombre: 'Freezer Industrial',
-					desc: 'Para almacenamiento de carnes. Rango: -18°C a -25°C.',
+					desc: 'Para almacenamiento de carnes. Rango: -18 C a -25 C.',
 					precio: '$8.900.000',
 					img: 'Multimedia/Freezer-Vertical-Industrial-PRO-Heavy-Duty.jpg',
 					badge: 'OFERTA',
-					id: 7
+					id: 7,
+					stock: 1
 				},
 				{
 					nombre: 'Heladera Expositora Vertical',
-					desc: 'Almacenamiento a largo plazo. Rango: -18°C a -25°C.',
+					desc: 'Almacenamiento a largo plazo. Rango: -18 C a -25 C.',
 					precio: '$9.370.000',
 					img: 'Multimedia/Almacenera 4 puertas.png',
 					badge: 'NUEVO',
-					id: 8
+					id: 8,
+					stock: 0
 				},
 				{
 					nombre: 'Vitrina Refrigerada',
@@ -138,14 +146,16 @@
 					precio: '$3.700.000',
 					img: 'Multimedia/Vitrina.png',
 					badge: 'NUEVO',
-					id: 9
+					id: 9,
+					stock: 6
 				},
 				{
 					nombre: 'Gondola Para Verduras',
 					precio: '$1.270.000',
 					img: 'Multimedia/GOND-VER2B-600x600.png',
 					badge: 'OFERTA',
-					id: 10 
+					id: 10,
+					stock: 0
 				},
 				{
 					nombre: 'Gondola para lacteos',
@@ -153,7 +163,8 @@
 					precio: '$850.000',
 					img: 'Multimedia/Gondola Lacteos.jpg',
 					badge: 'OFERTA',
-					id: 11
+					id: 11,
+					stock: 7
 				},
 				
 			];
@@ -172,35 +183,56 @@
 				h3.textContent = p.nombre;
 				article.appendChild(h3);
 
-				const desc = document.createElement('p');
-				desc.textContent = p.desc;
-				article.appendChild(desc);
+				if (p.desc) {
+					const desc = document.createElement('p');
+					desc.textContent = p.desc;
+					article.appendChild(desc);
+				}
 
 				const precio = document.createElement('p');
 				precio.textContent = p.precio;
 				article.appendChild(precio);
 
+				const body = document.createElement('div');
+				body.className = 'card-body';
+
 				const img = document.createElement('img');
-				img.src = p.img;
+				img.src = p.img.trim();
 				img.alt = p.nombre;
 				img.width = 350;
 				img.height = 250;
 				img.loading = 'lazy';
-				article.appendChild(img);
+				body.appendChild(img);
+
+				const actions = document.createElement('div');
+				actions.className = 'card-actions';
 
 				const btn = document.createElement('button');
 				btn.className = 'btn-comprar';
 				btn.textContent = 'Comprar';
 				btn.dataset.id = p.id;
-				article.appendChild(btn);
+				actions.appendChild(btn);
+
+				const stockEl = document.createElement('span');
+				stockEl.className = 'stock-info';
+				if (p.stock > 0) {
+					stockEl.textContent = 'Disponible (' + p.stock + ' uds.)';
+					stockEl.classList.add('disponible');
+				} else {
+					stockEl.textContent = 'Agotado';
+					stockEl.classList.add('agotado');
+				}
+				actions.appendChild(stockEl);
+
+				body.appendChild(actions);
+				article.appendChild(body);
 
 				contenedor.appendChild(article);
 			});
 
-			// 5) delegacion: un solo listener en el contenedor
 			contenedor.addEventListener('click', function(e) {
 				if (e.target.classList.contains('btn-comprar')) {
-					console.log(e.target.dataset.id);
+					window.location.href = 'compra.html?id=' + e.target.dataset.id;
 				}
 			});
 		</script>
