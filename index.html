@@ -32,74 +32,7 @@
 
 			<section id="productos">
 				<h2>Nuestros Productos</h2>
-
-				<article>
-					<span class="badge">OFERTA</span>
-					<h3>Heladera Expositora Vertical</h3>
-					<p>
-						Ideal para bebidas y productos lacteos. Capacidad de 400
-						litros.
-					</p>
-					<p>Precio: $870.000</p>
-					<img
-						src="Multimedia/heladera.jfif"
-						width="350" 
-						height="250"
-						alt="Heladera Expositora Vertical"
-						loading="lazy"
-					/>
-				</article>
-
-				<article>
-					<span class="badge">NUEVO</span>
-					<h3>Heladera de Mostrador</h3>
-					<p>
-						Perfecta para carnicerias y panaderias. Acero
-						inoxidable.
-					</p>
-					<p>Precio: $1.000.000</p>
-					<img 
-					    src="Multimedia/heladera-exhibidora-batea-02.jpg"
-						width="350" 
-						height="250"
-						alt="Heladera Mostrador"
-						loading="lazy"
-					/>
-				</article>
-
-				<article>
-					<span class="badge">OFERTA</span>
-					<h3>Freezer Industrial</h3>
-					<p>
-						Para almacenamiento a largo plazo. Rango de temperatura:
-						-18°C a -25°C.
-					</p>
-					<p>Precio: $8.900.000</p>
-					<img
-					    src="Multimedia/Freezer-Vertical-Industrial-PRO-Heavy-Duty.jpg"
-						width="350" 
-						height="250"
-						alt="Freezer Industrial"
-						loading="lazy"
-					/>
-				</article>
-
-				<article>
-					<span class="badge">NUEVO</span>
-					<h3>Vitrina Refrigerada</h3>
-					<p>
-						Para pastelerias y restaurantes. Puerta de vidrio con
-						luz LED.
-					</p>
-					<p>Precio: $3.700.000</p>
-					<img
-					    src="Multimedia/Vitrina.png"
-						width="350" 
-						height="250"
-						alt="Vitrina"
-						loading="lazy"
- 					/>
-				</article>
+				<div id="cards-container"></div>
 			</section>
 
 			<section id="nosotros">
@@ -116,5 +49,105 @@
 		<footer>
 			<p>&copy; 2026 ColdMax. Todos los derechos reservados.</p>
 		</footer>
+
+		<script>
+			// 1) querySelector / querySelectorAll
+			const nav = document.querySelector('nav');
+			const links = document.querySelectorAll('nav a');
+			const btnForm = document.querySelector('#alta button[type="submit"]');
+
+			// 2) link activo sin recargar
+			links.forEach(function(link) {
+				link.addEventListener('click', function(e) {
+					if (link.getAttribute('href').startsWith('#')) {
+						e.preventDefault();
+					}
+					links.forEach(function(l) { l.classList.remove('activa'); });
+					link.classList.add('activa');
+				});
+			});
+
+			// 3) array de productos y generacion del grid
+			const productos = [
+				{
+					nombre: 'Heladera Expositora Vertical',
+					desc: 'Ideal para bebidas y productos lacteos. Capacidad de 400 litros.',
+					precio: '$870.000',
+					img: 'Multimedia/heladera.jfif',
+					badge: 'OFERTA',
+					id: 1
+				},
+				{
+					nombre: 'Heladera de Mostrador',
+					desc: 'Perfecta para carnicerias y panaderias. Acero inoxidable.',
+					precio: '$1.000.000',
+					img: 'Multimedia/heladera-exhibidora-batea-02.jpg',
+					badge: 'NUEVO',
+					id: 2
+				},
+				{
+					nombre: 'Freezer Industrial',
+					desc: 'Para almacenamiento a largo plazo. Rango: -18°C a -25°C.',
+					precio: '$8.900.000',
+					img: 'Multimedia/Freezer-Vertical-Industrial-PRO-Heavy-Duty.jpg',
+					badge: 'OFERTA',
+					id: 3
+				},
+				{
+					nombre: 'Vitrina Refrigerada',
+					desc: 'Para pastelerias y restaurantes. Puerta de vidrio con luz LED.',
+					precio: '$3.700.000',
+					img: 'Multimedia/Vitrina.png',
+					badge: 'NUEVO',
+					id: 4
+				}
+			];
+
+			const contenedor = document.querySelector('#cards-container');
+
+			productos.forEach(function(p) {
+				const article = document.createElement('article');
+
+				const badge = document.createElement('span');
+				badge.className = 'badge';
+				badge.textContent = p.badge;
+				article.appendChild(badge);
+
+				const h3 = document.createElement('h3');
+				h3.textContent = p.nombre;
+				article.appendChild(h3);
+
+				const desc = document.createElement('p');
+				desc.textContent = p.desc;
+				article.appendChild(desc);
+
+				const precio = document.createElement('p');
+				precio.textContent = p.precio;
+				article.appendChild(precio);
+
+				const img = document.createElement('img');
+				img.src = p.img;
+				img.alt = p.nombre;
+				img.width = 350;
+				img.height = 250;
+				img.loading = 'lazy';
+				article.appendChild(img);
+
+				const btn = document.createElement('button');
+				btn.className = 'btn-comprar';
+				btn.textContent = 'Comprar';
+				btn.dataset.id = p.id;
+				article.appendChild(btn);
+
+				contenedor.appendChild(article);
+			});
+
+			// 5) delegacion: un solo listener en el contenedor
+			contenedor.addEventListener('click', function(e) {
+				if (e.target.classList.contains('btn-comprar')) {
+					console.log(e.target.dataset.id);
+				}
+			});
+		</script>
 	</body>
 </html>
