@@ -151,11 +151,18 @@ article {
     opacity: 0;
 }
 
-/* (requisito 4) delay escalonado: cada card aparece una tras otra */
-article:nth-child(1) { animation-delay: 0.1s; }
-article:nth-child(2) { animation-delay: 0.2s; }
-article:nth-child(3) { animation-delay: 0.3s; }
-article:nth-child(4) { animation-delay: 0.4s; }
+/* delay escalonado: cada card aparece una tras otra */
+article:nth-child(1) { animation-delay: 0.05s; }
+article:nth-child(2) { animation-delay: 0.1s; }
+article:nth-child(3) { animation-delay: 0.15s; }
+article:nth-child(4) { animation-delay: 0.2s; }
+article:nth-child(5) { animation-delay: 0.25s; }
+article:nth-child(6) { animation-delay: 0.3s; }
+article:nth-child(7) { animation-delay: 0.35s; }
+article:nth-child(8) { animation-delay: 0.4s; }
+article:nth-child(9) { animation-delay: 0.45s; }
+article:nth-child(10) { animation-delay: 0.5s; }
+article:nth-child(11) { animation-delay: 0.55s; }
 
 /* (requisito 3) hover: levanta y agranda ligeramente la card */
 article:hover {
@@ -213,28 +220,59 @@ article p {
     margin-bottom: 8px;
 }
 
-article img {
-    max-width: 100%;
-    height: auto;
+.card-body {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
     margin-top: 10px;
-    display: block;
+}
+
+article img {
+    max-width: 350px;
+    height: auto;
     border-radius: 5px;
-    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.card-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 180px;
 }
 
 .btn-comprar {
     background-color: #e63946;
     color: #ffffff;
     border: none;
-    padding: 8px 16px;
+    padding: 10px 24px;
     border-radius: 4px;
     font-size: 0.9rem;
     cursor: pointer;
     transition: background-color 0.3s;
+    width: 100%;
 }
 
 .btn-comprar:hover {
     background-color: #c1121f;
+}
+
+.stock-info {
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+.stock-info.disponible {
+    color: #155724;
+    background-color: #d4edda;
+}
+
+.stock-info.agotado {
+    color: #721c24;
+    background-color: #f8d7da;
 }
 
 /* ----------------------------------------

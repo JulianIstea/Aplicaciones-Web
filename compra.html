@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprar - ColdMax</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <header>
+        <h1>ColdMax</h1>
+        <p>Procesar compra</p>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="index.html#productos">Productos</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="compra-page">
+        <h2>Procesar Compra</h2>
+        <div id="compra-info"></div>
+
+        <form id="compra-form">
+            <p>
+                <label for="compra-nombre">Nombre completo:</label><br>
+                <input type="text" id="compra-nombre" name="compra-nombre" required>
+            </p>
+            <p>
+                <label for="compra-email">Email:</label><br>
+                <input type="email" id="compra-email" name="compra-email" required>
+            </p>
+            <p>
+                <label for="compra-cantidad">Cantidad:</label><br>
+                <input type="number" id="compra-cantidad" name="compra-cantidad" min="1" value="1" required>
+            </p>
+            <p>
+                <button type="submit">Confirmar compra</button>
+            </p>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 ColdMax. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const prodId = params.get('id');
+
+        const info = document.querySelector('#compra-info');
+
+        if (prodId) {
+            const p = document.createElement('p');
+            p.textContent = 'Producto seleccionado: ID ' + prodId;
+            info.appendChild(p);
+        } else {
+            const p = document.createElement('p');
+            p.textContent = 'No se selecciono ningun producto.';
+            info.appendChild(p);
+        }
+    </script>
+</body>
+</html>
