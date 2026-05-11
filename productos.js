@@ -1,5 +1,5 @@
 // 1) Array de 6 productos como objetos
-const productos = [
+const productosList = [
     { id: 1, nombre: 'Heladora Expositora Vertical', precio: 870000, stock: 5 },
     { id: 2, nombre: 'Heladera de Mostrador', precio: 1000000, stock: 0 },
     { id: 3, nombre: 'Freezer Industrial', precio: 8900000, stock: 2 },
@@ -12,7 +12,7 @@ const productos = [
 const disponibles = [];
 const agotados = [];
 
-productos.forEach(function(p) {
+productosList.forEach(function(p) {
     if (p.stock > 0) {
         disponibles.push(p);
     } else {
@@ -27,11 +27,11 @@ console.log('--- Productos agotados ---');
 agotados.forEach(function(p) { console.log(p.nombre); });
 
 // 3) Nombres precio > 8.000.000, en mayusculas. Una linea con filter + map encadenados
-const caros = productos.filter(function(p) { return p.precio > 8000000; }).map(function(p) { return p.nombre.toUpperCase(); });
+const caros = productosList.filter(function(p) { return p.precio > 8000000; }).map(function(p) { return p.nombre.toUpperCase(); });
 console.log('--- Productos caros (> $8.000.000) ---', caros);
 
 // 4) Suma de precio * stock con reduce, luego loguear con IVA (21%)
-const totalSinIVA = productos.reduce(function(acum, p) { return acum + (p.precio * p.stock); }, 0);
+const totalSinIVA = productosList.reduce(function(acum, p) { return acum + (p.precio * p.stock); }, 0);
 const conIVA = totalSinIVA * 1.21;
 console.log('Total sin IVA: $' + totalSinIVA);
 console.log('Total con IVA (21%): $' + conIVA);
