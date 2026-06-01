@@ -1,241 +1,160 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
- 		<meta charset="UTF-8" />
- 		<title>ColdMax - Heladeras para Negocios</title>
-		<link rel="stylesheet" href="estilos.css">
-<script src="productos.js"></script>
- 	</head>
-	<body>
-		<header>
-			<h1>ColdMax</h1>
-			<p>Heladeras profesionales para tu negocio</p>
-		</header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColdMax - Heladeras para Negocios</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
 
-		<nav>
-			<ul>
-				<li><a href="#inicio">Inicio</a></li>
-				<li><a href="#productos">Productos</a></li>
-				<li><a href="#nosotros">Nosotros</a></li>
-				<li><a href="contacto.html">Contacto</a></li>
-			</ul>
-		</nav>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">Cold<span>Max</span></a>
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="#inicio" class="activa">Inicio</a>
+            <a href="#productos">Productos</a>
+            <a href="#nosotros">Nosotros</a>
+            <a href="contacto.html">Contacto</a>
+            <a href="carrito.html" class="navbar-cart">
+                &#128722; Carrito
+                <span class="cart-count vacia">0</span>
+            </a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
 
-		<main>
-			<section id="inicio">
-				<h2>Bienvenidos</h2>
-				<p>
-					Somos especialistas en equipos de refrigeracion comercial.
-					Ofrecemos heladeras de alta calidad para restaurantes,
-					supermercados, farmacias y mas.
-				</p>
-			</section>
+    <main>
+        <!-- Hero -->
+        <section class="hero" id="inicio">
+            <h1>Heladeras Profesionales para tu Negocio</h1>
+            <p>Mas de 15 años de experiencia brindando soluciones de refrigeracion comercial a restaurantes, supermercados y farmacias.</p>
+        </section>
 
-			<section id="productos">
-				<h2>Nuestros Productos</h2>
-				<div id="cards-container"></div>
-			</section>
+        <!-- Productos -->
+        <section id="productos">
+            <h2 class="section-title">Nuestros Productos</h2>
+            <div class="products-grid" id="productsGrid"></div>
+        </section>
 
-			<section id="nosotros">
-				<h2>Sobre Nosotros</h2>
-				<p>
-					ColdMax cuenta con mas de 15 años de experiencia en el
-					mercado de refrigeracion comercial. Trabajamos con las
-					mejores marcas y ofrecemos garantia en todos nuestros
-					productos.
-				</p>
-			</section>
-		</main>
+        <!-- Nosotros -->
+        <section id="nosotros" class="about-section">
+            <h2>Sobre ColdMax</h2>
+            <p>Somos especialistas en equipos de refrigeracion comercial. Trabajamos con las mejores marcas y ofrecemos garantia en todos nuestros productos. Contamos con asesoramiento tecnico y envio a todo el pais.</p>
+        </section>
+    </main>
 
-		<footer>
-			<p>&copy; 2026 ColdMax. Todos los derechos reservados.</p>
-		</footer>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">ColdMax</div>
+                <p>Soluciones de refrigeracion comercial para negocios de todos los tamanos.</p>
+            </div>
+            <div>
+                <h4>Navegacion</h4>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#productos">Productos</a></li>
+                    <li><a href="#nosotros">Nosotros</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Contacto</h4>
+                <ul>
+                    <li><a href="tel:+54431127">+54 431127</a></li>
+                    <li><a href="mailto:ventas@coldmax.com">ventas@coldmax.com</a></li>
+                    <li><a href="#">Av. San Martin 466</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 ColdMax. Todos los derechos reservados.
+        </div>
+    </footer>
 
-		<script>
-			// 1) querySelector / querySelectorAll
-			const nav = document.querySelector('nav');
-			const links = document.querySelectorAll('nav a');
-			const btnForm = document.querySelector('#alta button[type="submit"]');
+    <script src="app.js"></script>
+    <script>
+        // Hamburger menu
+        document.querySelector('#hamburger').addEventListener('click', function () {
+            document.querySelector('#navbarMenu').classList.toggle('abierta');
+        });
 
-			// 2) link activo sin recargar
-			links.forEach(function(link) {
-				link.addEventListener('click', function(e) {
-					if (link.getAttribute('href').startsWith('#')) {
-						e.preventDefault();
-					}
-					links.forEach(function(l) { l.classList.remove('activa'); });
-					link.classList.add('activa');
-				});
-			});
+        // Active nav link
+        var links = document.querySelectorAll('.navbar-menu a[href^="#"]');
+        links.forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                document.querySelector('#navbarMenu').classList.remove('abierta');
+                links.forEach(function (l) { l.classList.remove('activa'); });
+                link.classList.add('activa');
+            });
+        });
 
-			// 3) array de productos y generacion del grid
-			const productos = [
-				{
-					nombre: 'Heladera Expositora Vertical',
-					desc: 'Ideal para bebidas y productos lacteos. Capacidad de 400 litros.',
-					precio: '$870.000',
-					img: 'Multimedia/heladera.jfif',
-					badge: 'OFERTA',
-					id: 1,
-					stock: 5
-				},
-				{
-					nombre: 'Heladera Expositora Vertical 2 Puertas',
-					desc: 'Ideal para bebidas y productos lacteos.',
-					precio: '$990.000',
-					img: 'Multimedia/EXHIBID-2P-B-600x600.png ',
-					badge: 'OFERTA',
-					id: 2,
-					stock: 3
-				},
-				{
-					nombre: 'Heladera Expositora Vertical 3 Puertas',
-					desc: 'Ideal para bebidas',
-					precio: '$1.200.000',
-					img: 'Multimedia/EXHIBID-3PA-600x600.png ',
-					badge: 'NUEVO',
-					id: 3,
-					stock: 0
-				},
-				{
-					nombre: 'Heladera Expositora Vertical 4 Puertas',
-					desc: 'Ideal para bebidas y mas!!',
-					precio: '$1.420.000',
-					img: 'Multimedia/EXHIBID-4P-D-600x600.png',
-					badge: 'OFERTA',
-					id: 4,
-					stock: 2
-				},
-				{
-					nombre: 'Heladera Expositora Vertical 5 Puertas',
-					precio: '$1.880.000',
-					img: 'Multimedia/EXHIBIDORA-5P.png',
-					badge: 'NUEVO',
-					id: 5,
-					stock: 0
-				},
-				{
-					nombre: 'Heladera de Mostrador',
-					desc: 'Perfecta para carnicerias y panaderias. Acero inoxidable.',
-					precio: '$1.000.000',
-					img: 'Multimedia/heladera-exhibidora-batea-02.jpg',
-					badge: 'NUEVO',
-					id: 6,
-					stock: 4
-				},
-				{
-					nombre: 'Freezer Industrial',
-					desc: 'Para almacenamiento de carnes. Rango: -18 C a -25 C.',
-					precio: '$8.900.000',
-					img: 'Multimedia/Freezer-Vertical-Industrial-PRO-Heavy-Duty.jpg',
-					badge: 'OFERTA',
-					id: 7,
-					stock: 1
-				},
-				{
-					nombre: 'Heladera Expositora Vertical',
-					desc: 'Almacenamiento a largo plazo. Rango: -18 C a -25 C.',
-					precio: '$9.370.000',
-					img: 'Multimedia/Almacenera 4 puertas.png',
-					badge: 'NUEVO',
-					id: 8,
-					stock: 0
-				},
-				{
-					nombre: 'Vitrina Refrigerada',
-					desc: 'Para pastelerias y restaurantes. Puerta de vidrio con luz LED.',
-					precio: '$3.700.000',
-					img: 'Multimedia/Vitrina.png',
-					badge: 'NUEVO',
-					id: 9,
-					stock: 6
-				},
-				{
-					nombre: 'Gondola Para Verduras',
-					precio: '$1.270.000',
-					img: 'Multimedia/GOND-VER2B-600x600.png',
-					badge: 'OFERTA',
-					id: 10,
-					stock: 0
-				},
-				{
-					nombre: 'Gondola para lacteos',
-					desc: 'Ideal productos lacteos. Capacidad de 600 litros.',
-					precio: '$850.000',
-					img: 'Multimedia/Gondola Lacteos.jpg',
-					badge: 'OFERTA',
-					id: 11,
-					stock: 7
-				},
-				
-			];
+        // Products data
+        var productos = [
+            { id: 1, nombre: 'Heladera Expositora Vertical', desc: 'Ideal para bebidas y productos lacteos. Capacidad de 400 litros.', precio: 870000, precioFormato: '$870.000', img: 'Multimedia/heladera.jfif', badge: 'oferta', stock: 5 },
+            { id: 2, nombre: 'Heladera Expositora Vertical 2 Puertas', desc: 'Ideal para bebidas y productos lacteos.', precio: 990000, precioFormato: '$990.000', img: 'Multimedia/EXHIBID-2P-B-600x600.png', badge: 'oferta', stock: 3 },
+            { id: 3, nombre: 'Heladera Expositora Vertical 3 Puertas', desc: 'Ideal para bebidas.', precio: 1200000, precioFormato: '$1.200.000', img: 'Multimedia/EXHIBID-3PA-600x600.png', badge: 'nuevo', stock: 0 },
+            { id: 4, nombre: 'Heladera Expositora Vertical 4 Puertas', desc: 'Ideal para bebidas y mas.', precio: 1420000, precioFormato: '$1.420.000', img: 'Multimedia/EXHIBID-4P-D-600x600.png', badge: 'oferta', stock: 2 },
+            { id: 5, nombre: 'Heladera Expositora Vertical 5 Puertas', desc: 'Gran capacidad para tu negocio.', precio: 1880000, precioFormato: '$1.880.000', img: 'Multimedia/EXHIBIDORA-5P.png', badge: 'nuevo', stock: 0 },
+            { id: 6, nombre: 'Heladera de Mostrador', desc: 'Perfecta para carnicerias y panaderias. Acero inoxidable.', precio: 1000000, precioFormato: '$1.000.000', img: 'Multimedia/heladera-exhibidora-batea-02.jpg', badge: 'nuevo', stock: 4 },
+            { id: 7, nombre: 'Freezer Industrial', desc: 'Para almacenamiento de carnes. Rango: -18C a -25C.', precio: 8900000, precioFormato: '$8.900.000', img: 'Multimedia/Freezer-Vertical-Industrial-PRO-Heavy-Duty.jpg', badge: 'oferta', stock: 1 },
+            { id: 8, nombre: 'Almacenera 4 Puertas', desc: 'Almacenamiento a largo plazo. Rango: -18C a -25C.', precio: 9370000, precioFormato: '$9.370.000', img: 'Multimedia/Almacenera 4 puertas.png', badge: 'nuevo', stock: 0 },
+            { id: 9, nombre: 'Vitrina Refrigerada', desc: 'Para pastelerias y restaurantes. Puerta de vidrio con luz LED.', precio: 3700000, precioFormato: '$3.700.000', img: 'Multimedia/Vitrina.png', badge: 'nuevo', stock: 6 },
+            { id: 10, nombre: 'Gondola Para Verduras', desc: 'Exhibicion refrigerada para verduleria.', precio: 1270000, precioFormato: '$1.270.000', img: 'Multimedia/GOND-VER2B-600x600.png', badge: 'oferta', stock: 0 },
+            { id: 11, nombre: 'Gondola para Lacteos', desc: 'Ideal para productos lacteos. Capacidad de 600 litros.', precio: 850000, precioFormato: '$850.000', img: 'Multimedia/Gondola Lacteos.jpg', badge: 'oferta', stock: 7 }
+        ];
 
-			const contenedor = document.querySelector('#cards-container');
+        // Render products
+        var grid = document.getElementById('productsGrid');
 
-			productos.forEach(function(p) {
-				const article = document.createElement('article');
+        productos.forEach(function (p) {
+            var card = document.createElement('div');
+            card.className = 'product-card';
 
-				const badge = document.createElement('span');
-				badge.className = 'badge';
-				badge.textContent = p.badge;
-				article.appendChild(badge);
+            var badgeText = p.badge === 'oferta' ? 'OFERTA' : 'NUEVO';
+            var stockHTML = p.stock > 0
+                ? '<span class="stock-tag disponible">Disponible (' + p.stock + ' uds.)</span>'
+                : '<span class="stock-tag agotado">Agotado</span>';
+            var disabledAttr = p.stock === 0 ? ' disabled' : '';
 
-				const h3 = document.createElement('h3');
-				h3.textContent = p.nombre;
-				article.appendChild(h3);
+            card.innerHTML =
+                '<span class="badge ' + p.badge + '">' + badgeText + '</span>' +
+                '<img class="card-img" src="' + p.img.trim() + '" alt="' + p.nombre + '" loading="lazy">' +
+                '<div class="card-body">' +
+                    '<h3>' + p.nombre + '</h3>' +
+                    (p.desc ? '<p class="desc">' + p.desc + '</p>' : '') +
+                    '<p class="price">' + p.precioFormato + '</p>' +
+                    '<div class="card-footer">' +
+                        '<button class="btn-add-cart" data-id="' + p.id + '"' + disabledAttr + '>Agregar al carrito</button>' +
+                        stockHTML +
+                    '</div>' +
+                '</div>';
 
-				if (p.desc) {
-					const desc = document.createElement('p');
-					desc.textContent = p.desc;
-					article.appendChild(desc);
-				}
+            grid.appendChild(card);
+        });
 
-				const precio = document.createElement('p');
-				precio.textContent = p.precio;
-				article.appendChild(precio);
+        // Add to cart
+        grid.addEventListener('click', function (e) {
+            var btn = e.target.closest('.btn-add-cart');
+            if (!btn || btn.disabled) return;
 
-				const body = document.createElement('div');
-				body.className = 'card-body';
+            var id = parseInt(btn.dataset.id);
+            var product = productos.find(function (p) { return p.id === id; });
 
-				const img = document.createElement('img');
-				img.src = p.img.trim();
-				img.alt = p.nombre;
-				img.width = 350;
-				img.height = 250;
-				img.loading = 'lazy';
-				body.appendChild(img);
-
-				const actions = document.createElement('div');
-				actions.className = 'card-actions';
-
-				const btn = document.createElement('button');
-				btn.className = 'btn-comprar';
-				btn.textContent = 'Comprar';
-				btn.dataset.id = p.id;
-				actions.appendChild(btn);
-
-				const stockEl = document.createElement('span');
-				stockEl.className = 'stock-info';
-				if (p.stock > 0) {
-					stockEl.textContent = 'Disponible (' + p.stock + ' uds.)';
-					stockEl.classList.add('disponible');
-				} else {
-					stockEl.textContent = 'Agotado';
-					stockEl.classList.add('agotado');
-				}
-				actions.appendChild(stockEl);
-
-				body.appendChild(actions);
-				article.appendChild(body);
-
-				contenedor.appendChild(article);
-			});
-
-			contenedor.addEventListener('click', function(e) {
-				if (e.target.classList.contains('btn-comprar')) {
-					window.location.href = 'compra.html?id=' + e.target.dataset.id;
-				}
-			});
-		</script>
-	</body>
+            if (product) {
+                Cart.addItem(product);
+                btn.textContent = 'Agregado!';
+                btn.style.background = '#198754';
+                setTimeout(function () {
+                    btn.textContent = 'Agregar al carrito';
+                    btn.style.background = '';
+                }, 1200);
+            }
+        });
+    </script>
+</body>
 </html>
