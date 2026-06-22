@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos Supabase - ColdMax</title>
+    <link rel="stylesheet" href="estilos.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">Cold<span>Max</span></a>
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="index.html">Inicio</a>
+            <a href="productos-supabase.html" class="activa">Supabase</a>
+            <a href="fetch.html">Fetch API</a>
+            <a href="contacto.html">Contacto</a>
+            <a href="carrito.html" class="navbar-cart">
+                &#128722; Carrito
+                <span class="cart-count vacia">0</span>
+            </a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <main>
+        <h2 class="section-title">Productos (Supabase)</h2>
+
+        <!-- Formulario agregar / editar -->
+        <section class="about-section" id="formSection">
+            <h2 id="formTitle">Agregar producto</h2>
+            <form id="productForm">
+                <input type="hidden" id="editId">
+
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Nombre del producto">
+                </div>
+
+                <div class="form-group">
+                    <label for="precio">Precio</label>
+                    <input type="number" id="precio" name="precio" required min="0" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input type="number" id="stock" name="stock" required min="0" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria">Categoria</label>
+                    <input type="text" id="categoria" name="categoria" required placeholder="Ej: Heladeras, Freezers">
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" class="btn-primary" id="btnSubmit">Agregar</button>
+                    <button type="button" class="btn-secondary" id="btnCancel" style="display:none;">Cancelar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Lista de productos -->
+        <section class="about-section">
+            <h2>Productos guardados</h2>
+            <p id="status">Cargando productos...</p>
+            <div class="products-grid" id="productsGrid"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-bottom">
+            &copy; 2026 ColdMax. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <!-- Conexión y lógica -->
+    <script src="supabase.js"></script>
+    <script>
+        // Hamburger
+        document.querySelector('#hamburger').addEventListener('click', function () {
+            document.querySelector('#navbarMenu').classList.toggle('abierta');
+        });
+
+        var grid = document.getElementById('productsGrid');
+        var status = document.getElementById('status');
+        var form = document.getElementById('productForm');
+        var editIdInput = document.getElementById('editId');
+        var formTitle = document.getElementById('formTitle');
+        var btnSubmit = document.getElementById('btnSubmit');
+        var btnCancel = document.getElementById('btnCancel');
+
+        // =============================================
+        // 1) TRAER datos y mostrar cards
+        // =============================================
+        async function cargarProductos() {
+            var { data, error } = await supabase
+                .from('productos')
+                .select('*')
+                .order('id', { ascending: true });
+
+            if (error) {
+                status.textContent = 'Error: ' + error.message;
+                return;
+            }
+
+            if (data.length === 0) {
+                status.textContent = 'No hay productos guardados.';
+                grid.innerHTML = '';
+                return;
+            }
+
+            status.textContent = data.length + ' productos encontrados.';
+            renderCards(data);
+        }
+
+        function renderCards(productos) {
+            grid.innerHTML = '';
+
+            productos.forEach(function (p) {
+                var card = document.createElement('div');
+                card.className = 'product-card';
+
+                card.innerHTML =
+                    '<div class="card-body">' +
+                        '<h3>' + p.nombre + '</h3>' +
+                        '<p class="desc">Categoria: ' + (p.categoria || 'Sin categoria') + '</p>' +
+                        '<p class="price">$' + Number(p.precio).toLocaleString('es-AR') + '</p>' +
+                        '<p class="desc">Stock: ' + p.stock + ' unidades</p>' +
+                        '<div class="card-footer" style="flex-direction:column; gap:8px;">' +
+                            '<div style="display:flex; gap:8px; width:100%;">' +
+                                '<button class="btn-add-cart btn-edit" data-id="' + p.id + '" style="background:#0077B6; flex:1;">Editar</button>' +
+                                '<button class="btn-add-cart btn-delete" data-id="' + p.id + '" style="background:#DC3545; flex:1;">Eliminar</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+
+                grid.appendChild(card);
+            });
+        }
+
+        // =============================================
+        // 2) FORMULARIO - Crear nuevo producto
+        // =============================================
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            var nombre = document.getElementById('nombre').value.trim();
+            var precio = document.getElementById('precio').value;
+            var stock = document.getElementById('stock').value;
+            var categoria = document.getElementById('categoria').value.trim();
+            var editId = editIdInput.value;
+
+            if (editId) {
+                // UPDATE
+                var { error } = await supabase
+                    .from('productos')
+                    .update({ nombre: nombre, precio: precio, stock: stock, categoria: categoria })
+                    .eq('id', editId);
+
+                if (error) {
+                    alert('Error al actualizar: ' + error.message);
+                    return;
+                }
+
+                cancelarEdicion();
+            } else {
+                // INSERT
+                var { error } = await supabase
+                    .from('productos')
+                    .insert([{ nombre: nombre, precio: precio, stock: stock, categoria: categoria }]);
+
+                if (error) {
+                    alert('Error al agregar: ' + error.message);
+                    return;
+                }
+            }
+
+            form.reset();
+            cargarProductos();
+        });
+
+        // =============================================
+        // 3) UPDATE y DELETE desde las cards
+        // =============================================
+        grid.addEventListener('click', async function (e) {
+            var btn = e.target;
+
+            // EDITAR
+            if (btn.classList.contains('btn-edit')) {
+                var id = btn.dataset.id;
+
+                var { data, error } = await supabase
+                    .from('productos')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) {
+                    alert('Error: ' + error.message);
+                    return;
+                }
+
+                document.getElementById('nombre').value = data.nombre;
+                document.getElementById('precio').value = data.precio;
+                document.getElementById('stock').value = data.stock;
+                document.getElementById('categoria').value = data.categoria || '';
+                editIdInput.value = data.id;
+
+                formTitle.textContent = 'Editar producto';
+                btnSubmit.textContent = 'Guardar cambios';
+                btnCancel.style.display = 'inline-block';
+
+                document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // ELIMINAR
+            if (btn.classList.contains('btn-delete')) {
+                var id = btn.dataset.id;
+
+                if (!confirm('Seguro que queres eliminar este producto?')) return;
+
+                var { error } = await supabase
+                    .from('productos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    alert('Error al eliminar: ' + error.message);
+                    return;
+                }
+
+                cargarProductos();
+            }
+        });
+
+        // Cancelar edición
+        btnCancel.addEventListener('click', function () {
+            cancelarEdicion();
+        });
+
+        function cancelarEdicion() {
+            form.reset();
+            editIdInput.value = '';
+            formTitle.textContent = 'Agregar producto';
+            btnSubmit.textContent = 'Agregar';
+            btnCancel.style.display = 'none';
+        }
+
+        // =============================================
+        // Cargar productos al iniciar
+        // =============================================
+        cargarProductos();
+    </script>
+</body>
+</html>
