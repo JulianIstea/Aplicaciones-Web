@@ -35,6 +35,10 @@
                         <label for="stock">Stock</label>
                         <input type="number" id="stock" name="stock" required min="0" placeholder="0">
                     </div>
+                    <div class="form-group">
+                        <label for="imagen">URL de imagen</label>
+                        <input type="text" id="imagen" name="imagen" required placeholder="https://ejemplo.com/imagen.jpg">
+                    </div>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary" id="btnSubmit">&#10003; Agregar</button>
@@ -53,6 +57,7 @@
     <div id="footer-placeholder"></div>
 
     <script src="supabase.js"></script>
+    <script src="app.js"></script>
     <script>
         var grid = document.getElementById('productsGrid');
         var status = document.getElementById('status');
@@ -62,27 +67,11 @@
         var btnSubmit = document.getElementById('btnSubmit');
         var btnCancel = document.getElementById('btnCancel');
 
-        var iconos = {
-            'heladeras': '&#127449;',
-            'freezers': '&#10052;',
-            'vitroceramicas': '&#128293;',
-            'default': '&#9881;'
-        };
-
         function escapeHTML(str) {
             if (str === null || str === undefined) return '';
             var div = document.createElement('div');
             div.textContent = String(str);
             return div.innerHTML;
-        }
-
-        function getIcono(categoria) {
-            if (!categoria) return iconos.default;
-            var cat = categoria.toLowerCase();
-            if (cat.indexOf('heladera') !== -1) return iconos.heladeras;
-            if (cat.indexOf('freezer') !== -1) return iconos.freezers;
-            if (cat.indexOf('vitro') !== -1) return iconos.vitroceramicas;
-            return iconos.default;
         }
 
         async function cargarProductos() {
@@ -112,15 +101,15 @@
         function renderCards(productos) {
             grid.innerHTML = '';
             productos.forEach(function (p) {
+                console.log(p)
                 var card = document.createElement('div');
                 card.className = 'product-card';
                 var stockDot = p.stock > 0 ? 'ok' : 'no';
                 var stockText = p.stock > 0 ? p.stock + ' unidades' : 'Sin stock';
-                var icono = getIcono(p.categoria);
 
                 card.innerHTML =
                     '<div class="card-body" style="text-align:center; align-items:center;">' +
-                        '<div class="supa-card-icon">' + icono + '</div>' +
+                        '<img src="' + p.imagen + '" alt="' + escapeHTML(p.nombre) + '" style="width:100%; max-width:200px; height:150px; object-fit:cover; border-radius:8px; margin-bottom:8px;">' +
                         '<span class="supa-card-category">' + escapeHTML(p.categoria || 'Sin categoria') + '</span>' +
                         '<h3>' + escapeHTML(p.nombre) + '</h3>' +
                         '<p class="price">$' + Number(p.precio).toLocaleString('es-AR') + '</p>' +
@@ -140,19 +129,20 @@
             var precio = Number(document.getElementById('precio').value);
             var stock = Number(document.getElementById('stock').value);
             var categoria = document.getElementById('categoria').value.trim();
+            var imagen = document.getElementById('imagen').value.trim();
             var editId = editIdInput.value;
 
             if (editId) {
                 var { error } = await supabaseClient
                     .from('productos')
-                    .update({ nombre: nombre, precio: precio, stock: stock, categoria: categoria })
+                    .update({ nombre: nombre, precio: precio, stock: stock, categoria: categoria, imagen: imagen })
                     .eq('id', editId);
                 if (error) { alert('Error: ' + escapeHTML(error.message)); return; }
                 cancelarEdicion();
             } else {
                 var { error } = await supabaseClient
                     .from('productos')
-                    .insert([{ nombre: nombre, precio: precio, stock: stock, categoria: categoria }]);
+                    .insert([{ nombre: nombre, precio: precio, stock: stock, categoria: categoria, imagen: imagen }]);
                 if (error) { alert('Error: ' + escapeHTML(error.message)); return; }
             }
             form.reset();
@@ -172,6 +162,7 @@
                 document.getElementById('precio').value = data.precio;
                 document.getElementById('stock').value = data.stock;
                 document.getElementById('categoria').value = data.categoria || '';
+                document.getElementById('imagen').value = data.imagen || '';
                 editIdInput.value = data.id;
                 formTitle.innerHTML = '&#9998; Editar producto';
                 btnSubmit.innerHTML = '&#10003; Guardar cambios';

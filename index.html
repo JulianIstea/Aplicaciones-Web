@@ -19,7 +19,6 @@
 
         <section id="productos">
             <h2 class="section-title">Nuestros Productos</h2>
-            <div class="status-bar info" id="catalogStatus">&#8987; Cargando productos...</div>
             <div class="products-grid" id="productsGrid"></div>
         </section>
 
@@ -35,14 +34,6 @@
     <script src="app.js"></script>
     <script>
         var grid = document.getElementById('productsGrid');
-        var catalogStatus = document.getElementById('catalogStatus');
-
-        function escapeHTML(str) {
-            if (!str) return '';
-            var div = document.createElement('div');
-            div.textContent = String(str);
-            return div.innerHTML;
-        }
 
         async function cargarProductos() {
             var { data, error } = await supabaseClient
@@ -51,41 +42,29 @@
                 .order('id', { ascending: true });
 
             if (error) {
-                catalogStatus.className = 'status-bar error';
-                catalogStatus.innerHTML = '&#9888; Error al cargar productos: ' + escapeHTML(error.message);
+                grid.innerHTML = '<p style="color:red;">Error al cargar productos: ' + error.message + '</p>';
                 return;
             }
 
-            if (data.length === 0) {
-                catalogStatus.className = 'status-bar info';
-                catalogStatus.innerHTML = '&#128196; No hay productos disponibles.';
-                return;
-            }
-
-            catalogStatus.style.display = 'none';
-            renderCards(data);
+            renderProductos(data);
         }
 
-        function renderCards(productos) {
+        function renderProductos(productos) {
             grid.innerHTML = '';
 
             productos.forEach(function (p) {
                 var card = document.createElement('div');
                 card.className = 'product-card';
 
-                var stock = Number(p.stock) || 0;
-                var badge = stock > 0 ? 'oferta' : 'nuevo';
-                var badgeText = stock > 0 ? 'OFERTA' : 'SIN STOCK';
-                var stockHTML = stock > 0
-                    ? '<span class="stock-tag disponible">Disponible (' + stock + ' uds.)</span>'
+                var stockHTML = p.stock > 0
+                    ? '<span class="stock-tag disponible">Disponible (' + p.stock + ' uds.)</span>'
                     : '<span class="stock-tag agotado">Agotado</span>';
-                var disabledAttr = stock === 0 ? ' disabled' : '';
+                var disabledAttr = p.stock === 0 ? ' disabled' : '';
 
                 card.innerHTML =
-                    '<span class="badge ' + badge + '">' + badgeText + '</span>' +
+                    '<img class="card-img" src="' + p.imagen + '" alt="' + p.nombre + '" loading="lazy">' +
                     '<div class="card-body">' +
-                        '<h3>' + escapeHTML(p.nombre) + '</h3>' +
-                        (p.categoria ? '<p class="desc">' + escapeHTML(p.categoria) + '</p>' : '') +
+                        '<h3>' + p.nombre + '</h3>' +
                         '<p class="price">$' + Number(p.precio).toLocaleString('es-AR') + '</p>' +
                         '<div class="card-footer">' +
                             '<button class="btn-add-cart" data-id="' + p.id + '"' + disabledAttr + '>Agregar al carrito</button>' +
@@ -95,42 +74,25 @@
 
                 grid.appendChild(card);
             });
-        }
 
-        grid.addEventListener('click', function (e) {
-            var btn = e.target.closest('.btn-add-cart');
-            if (!btn || btn.disabled) return;
+            grid.addEventListener('click', function (e) {
+                var btn = e.target.closest('.btn-add-cart');
+                if (!btn || btn.disabled) return;
 
-            var id = parseInt(btn.dataset.id);
-            var card = btn.closest('.product-card');
-            var precioText = card.querySelector('.price').textContent;
-            var precio = parseInt(precioText.replace(/[^0-9]/g, ''));
-            var nombre = card.querySelector('h3').textContent;
-            var stockText = card.querySelector('.stock-tag').textContent;
-            var stockMatch = stockText.match(/\d+/);
-            var stock = stockMatch ? parseInt(stockMatch[0]) : 0;
+                var id = parseInt(btn.dataset.id);
+                var product = productos.find(function (p) { return p.id === id; });
 
-            var added = Cart.addItem({
-                id: id,
-                nombre: nombre,
-                precio: precio,
-                img: '',
-                stock: stock
+                if (product) {
+                    Cart.addItem({ id: product.id, nombre: product.nombre, precio: product.precio, img: product.imagen });
+                    btn.textContent = 'Agregado!';
+                    btn.style.background = '#198754';
+                    setTimeout(function () {
+                        btn.textContent = 'Agregar al carrito';
+                        btn.style.background = '';
+                    }, 1200);
+                }
             });
-
-            if (added === false) {
-                btn.textContent = 'Sin stock!';
-                btn.style.background = '#adb5bd';
-            } else {
-                btn.textContent = 'Agregado!';
-                btn.style.background = '#198754';
-            }
-
-            setTimeout(function () {
-                btn.textContent = 'Agregar al carrito';
-                btn.style.background = '';
-            }, 1200);
-        });
+        }
 
         cargarProductos();
     </script>
