@@ -8,32 +8,14 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Cold<span>Max</span></a>
-        <div class="navbar-menu" id="navbarMenu">
-            <a href="index.html">Inicio</a>
-            <a href="index.html#productos">Productos</a>
-            <a href="index.html#nosotros">Nosotros</a>
-            <a href="contacto.html" class="activa">Contacto</a>
-            <a href="carrito.html" class="navbar-cart">
-                &#128722; Carrito
-                <span class="cart-count vacia">0</span>
-            </a>
-        </div>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <main>
         <h2 class="section-title">Contacto</h2>
 
         <div class="contact-grid">
-            <!-- Info de contacto -->
             <div class="contact-info">
                 <h2>Informacion de Contacto</h2>
-
                 <div class="contact-info-item">
                     <span class="icon">&#128222;</span>
                     <div>
@@ -41,7 +23,6 @@
                         <div class="value">+54 431127</div>
                     </div>
                 </div>
-
                 <div class="contact-info-item">
                     <span class="icon">&#9993;</span>
                     <div>
@@ -49,7 +30,6 @@
                         <div class="value">ventas@coldmax.com</div>
                     </div>
                 </div>
-
                 <div class="contact-info-item">
                     <span class="icon">&#128205;</span>
                     <div>
@@ -59,7 +39,6 @@
                 </div>
             </div>
 
-            <!-- Formulario -->
             <div class="contact-form-card">
                 <h2>Envianos tu consulta</h2>
                 <form id="contactForm">
@@ -67,12 +46,10 @@
                         <label for="nombre">Nombre completo</label>
                         <input type="text" id="nombre" name="nombre" required minlength="2" placeholder="Tu nombre">
                     </div>
-
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" required placeholder="tu@email.com">
                     </div>
-
                     <div class="form-group">
                         <label for="asunto">Asunto</label>
                         <select id="asunto" name="asunto" required>
@@ -83,62 +60,24 @@
                             <option value="otro">Otro</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="mensaje">Mensaje</label>
                         <textarea id="mensaje" name="mensaje" rows="5" required minlength="10" placeholder="Escribe tu mensaje..."></textarea>
                     </div>
-
                     <button type="submit" class="btn-primary">Enviar consulta</button>
                 </form>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-grid">
-            <div>
-                <div class="footer-brand">ColdMax</div>
-                <p>Soluciones de refrigeracion comercial para negocios de todos los tamanos.</p>
-            </div>
-            <div>
-                <h4>Navegacion</h4>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="index.html#productos">Productos</a></li>
-                    <li><a href="index.html#nosotros">Nosotros</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Contacto</h4>
-                <ul>
-                    <li><a href="tel:+54431127">+54 431127</a></li>
-                    <li><a href="mailto:ventas@coldmax.com">ventas@coldmax.com</a></li>
-                    <li><a href="#">Av. San Martin 466</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            &copy; 2026 ColdMax. Todos los derechos reservados.
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script src="app.js"></script>
     <script>
-        // Hamburger menu
-        document.querySelector('#hamburger').addEventListener('click', function () {
-            document.querySelector('#navbarMenu').classList.toggle('abierta');
-        });
-
-        // Form validation
         var form = document.getElementById('contactForm');
-
         form.addEventListener('submit', function (e) {
+            e.preventDefault();
             var hayError = false;
-
-            // Remove old errors
             var previos = document.querySelectorAll('.error-msg');
             previos.forEach(function (el) { el.remove(); });
 
@@ -154,7 +93,6 @@
                 nombre.parentNode.appendChild(msg);
                 hayError = true;
             }
-
             if (email.value.trim() === '') {
                 var msg = document.createElement('span');
                 msg.className = 'error-msg';
@@ -168,7 +106,6 @@
                 email.parentNode.appendChild(msg);
                 hayError = true;
             }
-
             if (asunto.value === '') {
                 var msg = document.createElement('span');
                 msg.className = 'error-msg';
@@ -176,7 +113,6 @@
                 asunto.parentNode.appendChild(msg);
                 hayError = true;
             }
-
             if (mensaje.value.trim().length < 10) {
                 var msg = document.createElement('span');
                 msg.className = 'error-msg';
@@ -185,10 +121,7 @@
                 hayError = true;
             }
 
-            if (hayError) {
-                e.preventDefault();
-            } else {
-                e.preventDefault();
+            if (!hayError) {
                 alert('Consulta enviada con exito! Te contactaremos pronto.');
                 form.reset();
             }

@@ -8,29 +8,12 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Cold<span>Max</span></a>
-        <div class="navbar-menu" id="navbarMenu">
-            <a href="index.html">Inicio</a>
-            <a href="index.html#productos">Productos</a>
-            <a href="index.html#nosotros">Nosotros</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="carrito.html" class="navbar-cart">
-                &#128722; Carrito
-                <span class="cart-count vacia">0</span>
-            </a>
-        </div>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <main>
         <h2 class="section-title">Finalizar Compra</h2>
 
         <div class="checkout-grid">
-            <!-- Formulario -->
             <div class="checkout-form-card">
                 <h2>Datos de envio</h2>
                 <form id="checkoutForm">
@@ -38,27 +21,22 @@
                         <label for="nombre">Nombre completo</label>
                         <input type="text" id="nombre" name="nombre" required minlength="2" placeholder="Tu nombre">
                     </div>
-
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" required placeholder="tu@email.com">
                     </div>
-
                     <div class="form-group">
                         <label for="telefono">Telefono</label>
                         <input type="tel" id="telefono" name="telefono" required placeholder="+54 11 5555-1234">
                     </div>
-
                     <div class="form-group">
                         <label for="direccion">Direccion de envio</label>
                         <input type="text" id="direccion" name="direccion" required placeholder="Calle, numero, piso, depto">
                     </div>
-
                     <div class="form-group">
                         <label for="ciudad">Ciudad</label>
                         <input type="text" id="ciudad" name="ciudad" required placeholder="Ciudad">
                     </div>
-
                     <div class="form-group">
                         <label for="metodo-pago">Metodo de pago</label>
                         <select id="metodo-pago" name="metodo-pago" required>
@@ -68,12 +46,10 @@
                             <option value="efectivo">Efectivo contra reembolso</option>
                         </select>
                     </div>
-
                     <button type="submit" class="btn-success">Confirmar compra</button>
                 </form>
             </div>
 
-            <!-- Resumen -->
             <div class="checkout-summary" id="checkoutSummary">
                 <h2>Tu pedido</h2>
                 <div id="summaryItems"></div>
@@ -97,44 +73,10 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-grid">
-            <div>
-                <div class="footer-brand">ColdMax</div>
-                <p>Soluciones de refrigeracion comercial para negocios de todos los tamanos.</p>
-            </div>
-            <div>
-                <h4>Navegacion</h4>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="index.html#productos">Productos</a></li>
-                    <li><a href="index.html#nosotros">Nosotros</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Contacto</h4>
-                <ul>
-                    <li><a href="tel:+54431127">+54 431127</a></li>
-                    <li><a href="mailto:ventas@coldmax.com">ventas@coldmax.com</a></li>
-                    <li><a href="#">Av. San Martin 466</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            &copy; 2026 ColdMax. Todos los derechos reservados.
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script src="app.js"></script>
     <script>
-        // Hamburger menu
-        document.querySelector('#hamburger').addEventListener('click', function () {
-            document.querySelector('#navbarMenu').classList.toggle('abierta');
-        });
-
-        // Render checkout summary
         function renderCheckout() {
             var cart = Cart.getCart();
             var itemsContainer = document.getElementById('summaryItems');
@@ -148,9 +90,9 @@
             cart.forEach(function (item) {
                 html +=
                     '<div class="checkout-item">' +
-                        '<img src="' + item.img.trim() + '" alt="' + item.nombre + '">' +
+                        '<img src="' + (item.img || '').trim() + '" alt="' + (item.nombre || '') + '">' +
                         '<div style="flex:1;">' +
-                            '<div style="font-size:0.85rem; font-weight:600;">' + item.nombre + '</div>' +
+                            '<div style="font-size:0.85rem; font-weight:600;">' + (item.nombre || '') + '</div>' +
                             '<div style="font-size:0.8rem; color:#6c757d;">x' + item.quantity + '</div>' +
                         '</div>' +
                         '<strong style="font-size:0.9rem;">' + Cart.formatPrice(item.precio * item.quantity) + '</strong>' +
@@ -167,15 +109,13 @@
             document.getElementById('total').textContent = Cart.formatPrice(total);
         }
 
-        // Form validation
         var form = document.getElementById('checkoutForm');
-
         form.addEventListener('submit', function (e) {
             e.preventDefault();
 
             var cart = Cart.getCart();
             if (cart.length === 0) {
-                alert('El carrito esta vacio. Agrega productos antes de continuar.');
+                alert('El carrito esta vacio.');
                 return;
             }
 
@@ -183,8 +123,7 @@
             var previos = document.querySelectorAll('.error-msg');
             previos.forEach(function (el) { el.remove(); });
 
-            var campos = ['nombre', 'email', 'telefono', 'direccion', 'ciudad'];
-            campos.forEach(function (campo) {
+            ['nombre', 'email', 'telefono', 'direccion', 'ciudad'].forEach(function (campo) {
                 var input = document.getElementById(campo);
                 if (input.value.trim() === '') {
                     var msg = document.createElement('span');
@@ -204,18 +143,9 @@
                 hayError = true;
             }
 
-            var metodo = document.getElementById('metodo-pago');
-            if (metodo.value === '') {
-                var msg = document.createElement('span');
-                msg.className = 'error-msg';
-                msg.textContent = 'Selecciona un metodo de pago.';
-                metodo.parentNode.appendChild(msg);
-                hayError = true;
-            }
-
             if (!hayError) {
                 Cart.clearCart();
-                alert('Compra realizada con exito! Gracias por tu compra.');
+                alert('Compra realizada con exito!');
                 window.location.href = 'index.html';
             }
         });

@@ -20,6 +20,9 @@ const Cart = {
         const existing = cart.find(function (item) { return item.id === product.id; });
 
         if (existing) {
+            if (existing.quantity >= existing.stock) {
+                return false;
+            }
             existing.quantity += 1;
         } else {
             cart.push({
@@ -27,11 +30,13 @@ const Cart = {
                 nombre: product.nombre,
                 precio: product.precio,
                 img: product.img,
+                stock: product.stock || 999,
                 quantity: 1
             });
         }
 
         this.saveCart(cart);
+        return true;
     },
 
     removeItem: function (id) {
@@ -47,11 +52,14 @@ const Cart = {
         if (item) {
             if (quantity <= 0) {
                 this.removeItem(id);
+            } else if (quantity > item.stock) {
+                return false;
             } else {
                 item.quantity = quantity;
                 this.saveCart(cart);
             }
         }
+        return true;
     },
 
     getTotal: function () {
@@ -92,7 +100,26 @@ const Cart = {
     }
 };
 
+// =============================================
+// Cargar navbar y footer desde partials
+// =============================================
+function loadPartial(id, file) {
+    fetch(file)
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+            var el = document.getElementById(id);
+            if (el) el.innerHTML = html;
+
+            // Actualizar contador después de cargar navbar
+            if (id === 'navbar-placeholder') {
+                Cart.updateCount();
+            }
+        });
+}
+
 // Actualizar contador al cargar cualquier pagina
 document.addEventListener('DOMContentLoaded', function () {
+    loadPartial('navbar-placeholder', 'navbar.html');
+    loadPartial('footer-placeholder', 'footer.html');
     Cart.updateCount();
 });

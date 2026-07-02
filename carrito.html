@@ -8,23 +8,7 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Cold<span>Max</span></a>
-        <div class="navbar-menu" id="navbarMenu">
-            <a href="index.html">Inicio</a>
-            <a href="index.html#productos">Productos</a>
-            <a href="index.html#nosotros">Nosotros</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="carrito.html" class="navbar-cart activa">
-                &#128722; Carrito
-                <span class="cart-count vacia">0</span>
-            </a>
-        </div>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <main>
         <h2 class="section-title">Mi Carrito</h2>
@@ -50,43 +34,10 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-grid">
-            <div>
-                <div class="footer-brand">ColdMax</div>
-                <p>Soluciones de refrigeracion comercial para negocios de todos los tamanos.</p>
-            </div>
-            <div>
-                <h4>Navegacion</h4>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="index.html#productos">Productos</a></li>
-                    <li><a href="index.html#nosotros">Nosotros</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Contacto</h4>
-                <ul>
-                    <li><a href="tel:+54431127">+54 431127</a></li>
-                    <li><a href="mailto:ventas@coldmax.com">ventas@coldmax.com</a></li>
-                    <li><a href="#">Av. San Martin 466</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            &copy; 2026 ColdMax. Todos los derechos reservados.
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script src="app.js"></script>
     <script>
-        // Hamburger menu
-        document.querySelector('#hamburger').addEventListener('click', function () {
-            document.querySelector('#navbarMenu').classList.toggle('abierta');
-        });
-
         function renderCart() {
             var cart = Cart.getCart();
             var container = document.getElementById('cartContent');
@@ -110,18 +61,21 @@
 
             var itemsHTML = '';
             cart.forEach(function (item) {
+                var atMax = item.quantity >= item.stock;
+                var plusDisabled = atMax ? ' disabled' : '';
+
                 itemsHTML +=
                     '<div class="cart-item">' +
-                        '<img src="' + item.img.trim() + '" alt="' + item.nombre + '">' +
+                        '<img src="' + (item.img || '').trim() + '" alt="' + (item.nombre || '') + '">' +
                         '<div class="cart-item-info">' +
-                            '<h3>' + item.nombre + '</h3>' +
+                            '<h3>' + (item.nombre || '') + '</h3>' +
                             '<div class="price">' + Cart.formatPrice(item.precio) + '</div>' +
                         '</div>' +
                         '<div class="cart-item-actions">' +
                             '<div class="qty-control">' +
                                 '<button class="qty-minus" data-id="' + item.id + '">&#8722;</button>' +
-                                '<span>' + item.quantity + '</span>' +
-                                '<button class="qty-plus" data-id="' + item.id + '">+</button>' +
+                                '<span>' + item.quantity + ' / ' + item.stock + '</span>' +
+                                '<button class="qty-plus" data-id="' + item.id + '"' + plusDisabled + '>+</button>' +
                             '</div>' +
                             '<strong>' + Cart.formatPrice(item.precio * item.quantity) + '</strong>' +
                             '<button class="btn-danger remove-item" data-id="' + item.id + '">Eliminar</button>' +
@@ -137,7 +91,6 @@
                     '<div class="cart-items">' + itemsHTML + '</div>' +
                 '</div>';
 
-            // Summary
             var subtotal = Cart.getTotal();
             var iva = Math.round(subtotal * 0.21);
             var total = subtotal + iva;
@@ -148,7 +101,6 @@
             summary.style.display = 'block';
         }
 
-        // Event delegation for cart actions
         document.getElementById('cartContent').addEventListener('click', function (e) {
             var target = e.target;
 
@@ -156,7 +108,7 @@
                 var id = parseInt(target.dataset.id);
                 var cart = Cart.getCart();
                 var item = cart.find(function (i) { return i.id === id; });
-                if (item) {
+                if (item && item.quantity < item.stock) {
                     Cart.updateQuantity(id, item.quantity + 1);
                     renderCart();
                 }
