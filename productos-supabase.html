@@ -9,83 +9,56 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Cold<span>Max</span></a>
-        <div class="navbar-menu" id="navbarMenu">
-            <a href="index.html">Inicio</a>
-            <a href="productos-supabase.html" class="activa">Supabase</a>
-            <a href="fetch.html">Fetch API</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="carrito.html" class="navbar-cart">
-                &#128722; Carrito
-                <span class="cart-count vacia">0</span>
-            </a>
-        </div>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <main>
         <h2 class="section-title">Productos (Supabase)</h2>
 
-        <!-- Formulario agregar / editar -->
         <section class="about-section" id="formSection">
-            <h2 id="formTitle">Agregar producto</h2>
+            <h2 id="formTitle">&#10133; Agregar producto</h2>
             <form id="productForm">
                 <input type="hidden" id="editId">
-
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" required placeholder="Nombre del producto">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required placeholder="Nombre del producto">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <input type="text" id="categoria" name="categoria" required placeholder="Ej: Heladeras, Freezers">
+                    </div>
+                    <div class="form-group">
+                        <label for="precio">Precio ($)</label>
+                        <input type="number" id="precio" name="precio" required min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input type="number" id="stock" name="stock" required min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="imagen">URL de imagen</label>
+                        <input type="text" id="imagen" name="imagen" required placeholder="https://ejemplo.com/imagen.jpg">
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="precio">Precio</label>
-                    <input type="number" id="precio" name="precio" required min="0" placeholder="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="stock">Stock</label>
-                    <input type="number" id="stock" name="stock" required min="0" placeholder="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="categoria">Categoria</label>
-                    <input type="text" id="categoria" name="categoria" required placeholder="Ej: Heladeras, Freezers">
-                </div>
-
-                <div style="display:flex; gap:10px;">
-                    <button type="submit" class="btn-primary" id="btnSubmit">Agregar</button>
-                    <button type="button" class="btn-secondary" id="btnCancel" style="display:none;">Cancelar</button>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="btnSubmit">&#10003; Agregar</button>
+                    <button type="button" class="btn-secondary" id="btnCancel" style="display:none;">&#10005; Cancelar</button>
                 </div>
             </form>
         </section>
 
-        <!-- Lista de productos -->
         <section class="about-section">
-            <h2>Productos guardados</h2>
-            <p id="status">Cargando productos...</p>
+            <h2>&#128230; Productos guardados</h2>
+            <div class="status-bar info" id="status">&#8987; Cargando productos...</div>
             <div class="products-grid" id="productsGrid"></div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-bottom">
-            &copy; 2026 ColdMax. Todos los derechos reservados.
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
-    <!-- Conexión y lógica -->
     <script src="supabase.js"></script>
+    <script src="app.js"></script>
     <script>
-        // Hamburger
-        document.querySelector('#hamburger').addEventListener('click', function () {
-            document.querySelector('#navbarMenu').classList.toggle('abierta');
-        });
-
         var grid = document.getElementById('productsGrid');
         var status = document.getElementById('status');
         var form = document.getElementById('productForm');
@@ -94,166 +67,129 @@
         var btnSubmit = document.getElementById('btnSubmit');
         var btnCancel = document.getElementById('btnCancel');
 
-        // =============================================
-        // 1) TRAER datos y mostrar cards
-        // =============================================
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            var div = document.createElement('div');
+            div.textContent = String(str);
+            return div.innerHTML;
+        }
+
         async function cargarProductos() {
-            var { data, error } = await supabase
+            var { data, error } = await supabaseClient
                 .from('productos')
                 .select('*')
                 .order('id', { ascending: true });
 
             if (error) {
-                status.textContent = 'Error: ' + error.message;
+                status.className = 'status-bar error';
+                status.innerHTML = '&#9888; Error: ' + escapeHTML(error.message);
                 return;
             }
 
             if (data.length === 0) {
-                status.textContent = 'No hay productos guardados.';
+                status.className = 'status-bar info';
+                status.innerHTML = '&#128196; No hay productos guardados.';
                 grid.innerHTML = '';
                 return;
             }
 
-            status.textContent = data.length + ' productos encontrados.';
+            status.className = 'status-bar success';
+            status.innerHTML = '&#10003; ' + data.length + ' productos encontrados.';
             renderCards(data);
         }
 
         function renderCards(productos) {
             grid.innerHTML = '';
-
             productos.forEach(function (p) {
+                console.log(p)
                 var card = document.createElement('div');
                 card.className = 'product-card';
+                var stockDot = p.stock > 0 ? 'ok' : 'no';
+                var stockText = p.stock > 0 ? p.stock + ' unidades' : 'Sin stock';
 
                 card.innerHTML =
-                    '<div class="card-body">' +
-                        '<h3>' + p.nombre + '</h3>' +
-                        '<p class="desc">Categoria: ' + (p.categoria || 'Sin categoria') + '</p>' +
+                    '<div class="card-body" style="text-align:center; align-items:center;">' +
+                        '<img src="' + p.imagen + '" alt="' + escapeHTML(p.nombre) + '" style="width:100%; max-width:200px; height:150px; object-fit:cover; border-radius:8px; margin-bottom:8px;">' +
+                        '<span class="supa-card-category">' + escapeHTML(p.categoria || 'Sin categoria') + '</span>' +
+                        '<h3>' + escapeHTML(p.nombre) + '</h3>' +
                         '<p class="price">$' + Number(p.precio).toLocaleString('es-AR') + '</p>' +
-                        '<p class="desc">Stock: ' + p.stock + ' unidades</p>' +
-                        '<div class="card-footer" style="flex-direction:column; gap:8px;">' +
-                            '<div style="display:flex; gap:8px; width:100%;">' +
-                                '<button class="btn-add-cart btn-edit" data-id="' + p.id + '" style="background:#0077B6; flex:1;">Editar</button>' +
-                                '<button class="btn-add-cart btn-delete" data-id="' + p.id + '" style="background:#DC3545; flex:1;">Eliminar</button>' +
-                            '</div>' +
+                        '<div class="supa-card-stock"><span class="dot ' + stockDot + '"></span>' + stockText + '</div>' +
+                        '<div class="supa-card-actions">' +
+                            '<button class="btn-edit" data-id="' + p.id + '">&#9998; Editar</button>' +
+                            '<button class="btn-delete" data-id="' + p.id + '">&#128465; Eliminar</button>' +
                         '</div>' +
                     '</div>';
-
                 grid.appendChild(card);
             });
         }
 
-        // =============================================
-        // 2) FORMULARIO - Crear nuevo producto
-        // =============================================
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
-
             var nombre = document.getElementById('nombre').value.trim();
-            var precio = document.getElementById('precio').value;
-            var stock = document.getElementById('stock').value;
+            var precio = Number(document.getElementById('precio').value);
+            var stock = Number(document.getElementById('stock').value);
             var categoria = document.getElementById('categoria').value.trim();
+            var imagen = document.getElementById('imagen').value.trim();
             var editId = editIdInput.value;
 
             if (editId) {
-                // UPDATE
-                var { error } = await supabase
+                var { error } = await supabaseClient
                     .from('productos')
-                    .update({ nombre: nombre, precio: precio, stock: stock, categoria: categoria })
+                    .update({ nombre: nombre, precio: precio, stock: stock, categoria: categoria, imagen: imagen })
                     .eq('id', editId);
-
-                if (error) {
-                    alert('Error al actualizar: ' + error.message);
-                    return;
-                }
-
+                if (error) { alert('Error: ' + escapeHTML(error.message)); return; }
                 cancelarEdicion();
             } else {
-                // INSERT
-                var { error } = await supabase
+                var { error } = await supabaseClient
                     .from('productos')
-                    .insert([{ nombre: nombre, precio: precio, stock: stock, categoria: categoria }]);
-
-                if (error) {
-                    alert('Error al agregar: ' + error.message);
-                    return;
-                }
+                    .insert([{ nombre: nombre, precio: precio, stock: stock, categoria: categoria, imagen: imagen }]);
+                if (error) { alert('Error: ' + escapeHTML(error.message)); return; }
             }
-
             form.reset();
             cargarProductos();
         });
 
-        // =============================================
-        // 3) UPDATE y DELETE desde las cards
-        // =============================================
         grid.addEventListener('click', async function (e) {
             var btn = e.target;
 
-            // EDITAR
             if (btn.classList.contains('btn-edit')) {
                 var id = btn.dataset.id;
-
-                var { data, error } = await supabase
-                    .from('productos')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-
-                if (error) {
-                    alert('Error: ' + error.message);
-                    return;
-                }
+                var { data, error } = await supabaseClient
+                    .from('productos').select('*').eq('id', id).single();
+                if (error) { alert('Error: ' + escapeHTML(error.message)); return; }
 
                 document.getElementById('nombre').value = data.nombre;
                 document.getElementById('precio').value = data.precio;
                 document.getElementById('stock').value = data.stock;
                 document.getElementById('categoria').value = data.categoria || '';
+                document.getElementById('imagen').value = data.imagen || '';
                 editIdInput.value = data.id;
-
-                formTitle.textContent = 'Editar producto';
-                btnSubmit.textContent = 'Guardar cambios';
+                formTitle.innerHTML = '&#9998; Editar producto';
+                btnSubmit.innerHTML = '&#10003; Guardar cambios';
                 btnCancel.style.display = 'inline-block';
-
                 document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
             }
 
-            // ELIMINAR
             if (btn.classList.contains('btn-delete')) {
                 var id = btn.dataset.id;
-
                 if (!confirm('Seguro que queres eliminar este producto?')) return;
-
-                var { error } = await supabase
-                    .from('productos')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) {
-                    alert('Error al eliminar: ' + error.message);
-                    return;
-                }
-
+                var { error } = await supabaseClient
+                    .from('productos').delete().eq('id', id);
+                if (error) { alert('Error: ' + escapeHTML(error.message)); return; }
                 cargarProductos();
             }
         });
 
-        // Cancelar edición
-        btnCancel.addEventListener('click', function () {
-            cancelarEdicion();
-        });
+        btnCancel.addEventListener('click', cancelarEdicion);
 
         function cancelarEdicion() {
             form.reset();
             editIdInput.value = '';
-            formTitle.textContent = 'Agregar producto';
-            btnSubmit.textContent = 'Agregar';
+            formTitle.innerHTML = '&#10133; Agregar producto';
+            btnSubmit.innerHTML = '&#10003; Agregar';
             btnCancel.style.display = 'none';
         }
 
-        // =============================================
-        // Cargar productos al iniciar
-        // =============================================
         cargarProductos();
     </script>
 </body>
