@@ -103,6 +103,11 @@ const Cart = {
 // =============================================
 // Cargar navbar y footer desde partials
 // =============================================
+function toggleMenu() {
+    var menu = document.getElementById('navbarMenu');
+    if (menu) menu.classList.toggle('abierta');
+}
+
 function loadPartial(id, file) {
     fetch(file)
         .then(function (r) { return r.text(); })
@@ -110,9 +115,22 @@ function loadPartial(id, file) {
             var el = document.getElementById(id);
             if (el) el.innerHTML = html;
 
-            // Actualizar contador después de cargar navbar
             if (id === 'navbar-placeholder') {
                 Cart.updateCount();
+
+                var hamburger = document.getElementById('hamburger');
+                if (hamburger) {
+                    hamburger.addEventListener('click', toggleMenu);
+                }
+
+                // Marcar link activo
+                var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                var links = document.querySelectorAll('.navbar-menu a');
+                links.forEach(function (link) {
+                    if (link.getAttribute('href') === currentPage) {
+                        link.classList.add('activa');
+                    }
+                });
             }
         });
 }
